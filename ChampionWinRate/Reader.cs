@@ -15,9 +15,10 @@ namespace ChampionWinRate
     class Reader
     {
         private Dictionary<String, Queue<DateTime>> keysDict = new Dictionary<string,Queue<DateTime>>();
-        private const string DAWN_OF_TIME = "0001-01-01T00:00:00.000"; // arbitrary time long before any requests
+        private const String DAWN_OF_TIME = "0001-01-01T00:00:00.000"; // arbitrary time long before any requests
         private const int MAX_REQUESTS_PER_INTERVAL = 10;
         private const double INTERVAL = 10; // measured in seconds
+        private const String RATE_LIMIT_CODE = "429";
 
         public Reader()
         {
@@ -37,14 +38,33 @@ namespace ChampionWinRate
             }
         }
 
-        // Sends an API request to riotgames.com.
+        // Sends an API request to riotgames.com. Returns an empty string if
+        // Riot doesn't honor its rate limit.
         private String Request(String url)
         {
             WebClient client = new WebClient();
-            Stream stream = client.OpenRead(url);
-            StreamReader reader = new StreamReader(stream);
-            String message = reader.ReadToEnd();
-            return message;
+
+            // Riot doesn't always honor its rate limit
+            try
+            {
+                Stream stream = client.OpenRead(url);
+                StreamReader reader = new StreamReader(stream);
+                String message = reader.ReadToEnd();
+                return message;
+            }
+            catch (WebException webException)
+            {
+                if (webException.ToString().Contains(RATE_LIMIT_CODE))
+                {
+                    Console.WriteLine("rate limit exceeded");
+                }
+                else
+                {
+                    Console.WriteLine(webException.ToString());
+                }
+
+                return "";
+            }
         }
 
         // Tries to send an API request to riotgames.com. If all API keys have
@@ -61,6 +81,12 @@ namespace ChampionWinRate
                     if (DateTime.Now - timeQueue.Peek() > TimeSpan.FromSeconds(INTERVAL))
                     {
                         String message = Request(url + key);
+
+                        if (message == "")
+                        {
+                            break;
+                        }
+
                         timeQueue.Enqueue(DateTime.Now);
                         timeQueue.Dequeue();
                         return message;

@@ -19,11 +19,14 @@ namespace ChampionWinRate
         private Dictionary<int, PersonalParticipant> personalHistory = new Dictionary<int, PersonalParticipant>();
         private Dictionary<int, List<GlobalParticipant>> globalHistory = new Dictionary<int, List<GlobalParticipant>>();
         private Dictionary<int, Dictionary<Stats, int>> championStats = new Dictionary<int, Dictionary<Stats, int>>();
+        private String region;
         private const int MATCH_SEARCH_LIMIT = 15; // Riot restricts the amount of match history that can be searched
 
-        // stores personal history in a dictionary
+        // Stores personal history in a dictionary.
         public void StorePersonalHistory(String region, String summonerName)
         {
+            this.region = region;
+
             String summonerIdUrl = Coder.GetSummonerIdUrl(region, summonerName);
             String summonerIdJson = reader.TryRequest(summonerIdUrl);
             String summonerId = Parser.GetSummonerId(summonerIdJson);
@@ -53,8 +56,8 @@ namespace ChampionWinRate
             }
         }
 
-        // stores global history in a dictionary
-        public void StoreGlobalHistory(String region)
+        // Stores global history in a dictionary.
+        public void StoreGlobalHistory()
         {
             foreach (int matchId in personalHistory.Keys)
             {
@@ -70,7 +73,8 @@ namespace ChampionWinRate
             }
         }
 
-        // tallies the appropriate win/loss and ally/enemy statistic in a dictionary
+        // Tallies the appropriate win/loss and ally/enemy statistic in a
+        // dictionary.
         private void AddTally(int championId, Stats stat)
         {
             // add champion to dictionary if not already contained
@@ -88,7 +92,8 @@ namespace ChampionWinRate
             championStats[championId][stat] += 1;
         }
 
-        // calculates champion statistics from personal and global history dictionaries
+        // Calculates champion statistics from personal and global history
+        // dictionaries.
         public void CalcChampionStats()
         {
             foreach (int matchId in personalHistory.Keys)
