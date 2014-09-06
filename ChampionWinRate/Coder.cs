@@ -28,7 +28,7 @@ namespace ChampionWinRate
             return url;
         }
 
-        public static String GetMatchInfoUrl(String region, String matchId)
+        public static String GetMatchInfoUrl(String region, int matchId)
         {
             String getMatchInfo = "/v2.2/match/";
             String url = HTTPS + region + API + region + getMatchInfo + matchId + "?" + KEY;

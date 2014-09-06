@@ -23,13 +23,13 @@ namespace ChampionWinRate
             return id;
         }
 
-        public static MatchHistory GetMatchHistory(String json)
+        public static MatchHistory ParseMatchHistory(String json)
         {
             MatchHistory matchHistory = JsonConvert.DeserializeObject<MatchHistory>(json);
             return matchHistory;
         }
 
-        public static MatchInfo GetMatchInfo(String json)
+        public static MatchInfo ParseMatchInfo(String json)
         {
             MatchInfo matchInfo = JsonConvert.DeserializeObject<MatchInfo>(json);
             return matchInfo;
