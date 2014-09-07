@@ -96,11 +96,11 @@
             this.data.AllowUserToDeleteRows = false;
             this.data.AllowUserToResizeColumns = false;
             this.data.AllowUserToResizeRows = false;
-            this.data.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.data.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)));
             this.data.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.data.Location = new System.Drawing.Point(12, 57);
-            this.data.MaximumSize = new System.Drawing.Size(561, 242);
+            this.data.MaximumSize = new System.Drawing.Size(9999, 9999);
             this.data.MinimumSize = new System.Drawing.Size(561, 242);
             this.data.Name = "data";
             this.data.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
@@ -110,6 +110,7 @@
             // 
             // minGamesAnswer
             // 
+            this.minGamesAnswer.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.minGamesAnswer.Location = new System.Drawing.Point(158, 305);
             this.minGamesAnswer.Name = "minGamesAnswer";
             this.minGamesAnswer.Size = new System.Drawing.Size(27, 20);
@@ -119,6 +120,7 @@
             // 
             // minGamesQuery
             // 
+            this.minGamesQuery.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.minGamesQuery.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.minGamesQuery.Location = new System.Drawing.Point(12, 308);
             this.minGamesQuery.Name = "minGamesQuery";
@@ -151,7 +153,7 @@
             this.Controls.Add(this.personalWin);
             this.Controls.Add(this.go);
             this.Controls.Add(this.summoner);
-            this.MaximumSize = new System.Drawing.Size(604, 371);
+            this.MaximumSize = new System.Drawing.Size(604, 9999);
             this.MinimumSize = new System.Drawing.Size(604, 371);
             this.Name = "Gui";
             this.ShowIcon = false;
