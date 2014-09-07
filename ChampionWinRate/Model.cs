@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MatchHistoryNameSpace;
 using MatchInfoNameSpace;
 using System.Data;
+using System.Windows.Forms;
 
 namespace ChampionWinRate
 {
@@ -25,6 +26,8 @@ namespace ChampionWinRate
         private const int MATCH_SEARCH_LIMIT = 15; // Riot restricts the amount of match history that can be searched
         public const String ALLY_GAMES = "Ally Games";
         public const String ENEMY_GAMES = "Enemy Games";
+        public const String ALLY_WIN_RATE = "Ally Win %";
+        public const String ENEMY_WIN_RATE = "Enemy Win %";
 
         public Model (String region)
         {
@@ -65,10 +68,14 @@ namespace ChampionWinRate
         }
 
         // Stores global history in a dictionary.
-        public void StoreGlobalHistory()
+        public void StoreGlobalHistory(TextBox status)
         {
+            int matchCount = 1;
+
             foreach (int matchId in personalHistory.Keys)
             {
+                status.Text = "Found all games. Loading game data " + matchCount + "/" + personalHistory.Keys.Count + ".";
+                status.Refresh();
                 String matchInfoUrl = Coder.GetMatchInfoUrl(region, matchId);
                 String matchInfoJson = reader.TryRequest(matchInfoUrl);
                 MatchInfo matchInfo = Parser.ParseMatchInfo(matchInfoJson);
@@ -78,6 +85,8 @@ namespace ChampionWinRate
                 {
                     globalHistory[matchId].Add(new GlobalParticipant(participant.teamId, participant.stats.winner, participant.championId));
                 }
+
+                matchCount += 1;
             }
         }
 
@@ -131,8 +140,8 @@ namespace ChampionWinRate
         {
             winRates.Columns.Add("Champion", typeof(String));
             winRates.Columns.Add(ALLY_GAMES, typeof(int));
-            winRates.Columns.Add("Ally Win %", typeof(double));
-            winRates.Columns.Add("Enemy Win %", typeof(double));
+            winRates.Columns.Add(ALLY_WIN_RATE, typeof(double));
+            winRates.Columns.Add(ENEMY_WIN_RATE, typeof(double));
             winRates.Columns.Add(ENEMY_GAMES, typeof(int));
 
             foreach (int championId in championStats.Keys)
@@ -175,6 +184,13 @@ namespace ChampionWinRate
             ChampionInfo championInfo = Parser.ParseChampionInfo(json);
             String championName = championInfo.name;
             return championName;
+        }
+
+        // Counts the number of matches.
+        public int CountMatches()
+        {
+            int count = personalHistory.Keys.Count;
+            return count;
         }
     }
 
