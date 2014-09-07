@@ -42,6 +42,7 @@
             // summoner
             // 
             this.summoner.Location = new System.Drawing.Point(12, 12);
+            this.summoner.MaxLength = 16;
             this.summoner.Name = "summoner";
             this.summoner.Size = new System.Drawing.Size(185, 20);
             this.summoner.TabIndex = 0;
@@ -112,6 +113,7 @@
             // 
             this.minGamesAnswer.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.minGamesAnswer.Location = new System.Drawing.Point(158, 305);
+            this.minGamesAnswer.MaxLength = 3;
             this.minGamesAnswer.Name = "minGamesAnswer";
             this.minGamesAnswer.Size = new System.Drawing.Size(27, 20);
             this.minGamesAnswer.TabIndex = 3;
