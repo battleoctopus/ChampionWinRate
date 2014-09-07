@@ -17,7 +17,7 @@ namespace ChampionWinRate
     // participants as values.
     class Model
     {
-        private Reader reader;
+        public Reader reader;
         private Dictionary<int, PersonalParticipant> personalHistory = new Dictionary<int, PersonalParticipant>();
         private Dictionary<int, List<GlobalParticipant>> globalHistory = new Dictionary<int, List<GlobalParticipant>>();
         private Dictionary<int, Dictionary<Stats, int>> championStats = new Dictionary<int, Dictionary<Stats, int>>();

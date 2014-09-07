@@ -19,6 +19,7 @@ namespace ChampionWinRate
         private const int MAX_REQUESTS_PER_INTERVAL = 10;
         private const double INTERVAL = 10; // measured in seconds
         private const String RATE_LIMIT_CODE = "429";
+        private const String RATE_LIMIT_EXCEEDED = "rate limit exceeded";
 
         public Reader()
         {
@@ -56,7 +57,8 @@ namespace ChampionWinRate
             {
                 if (webException.ToString().Contains(RATE_LIMIT_CODE))
                 {
-                    Console.WriteLine("rate limit exceeded");
+                    Console.WriteLine(RATE_LIMIT_EXCEEDED);
+                    return RATE_LIMIT_EXCEEDED;
                 }
                 else
                 {
@@ -90,7 +92,7 @@ namespace ChampionWinRate
                     {
                         String message = Request(url + key);
 
-                        if (message == "")
+                        if (message == RATE_LIMIT_EXCEEDED)
                         {
                             break;
                         }

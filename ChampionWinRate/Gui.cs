@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -14,6 +15,7 @@ namespace ChampionWinRate
     {
         private Model model;
         private const int ENTER = 13;
+        private bool isLoaded = false;
 
         public Gui()
         {
@@ -30,6 +32,17 @@ namespace ChampionWinRate
             model = new Model(region.Text);
             status.Text = "finding all ranked solo and duo games";
             status.Refresh();
+
+            String summonerIdUrl = Coder.GetSummonerIdUrl(region.Text, summoner.Text);
+
+            if (model.reader.TryRequest(summonerIdUrl).Equals(""))
+            {
+                System.Windows.Forms.MessageBox.Show("invalid summoner name and or region");
+                return;
+            }
+
+            String summonerIdJson = model.reader.TryRequest(summonerIdUrl);
+
             model.StorePersonalHistory(summoner.Text);
             status.Text = "Found all games. Loading game data.";
             status.Refresh();
@@ -42,6 +55,7 @@ namespace ChampionWinRate
             model.CalcWinRates();
             personalWin.Text = "personal win rate: " + model.CalcPersonalWinRate().ToString("#.#") +"%";
             personalWin.Refresh();
+            isLoaded = true;
             minGamesAnswer_KeyPress("", new KeyPressEventArgs((char) ENTER));
             status.Text = "done with " + model.CountMatches() + " games";
             status.Refresh();
@@ -51,14 +65,26 @@ namespace ChampionWinRate
         {
             if (e.KeyChar == (char) ENTER)
             {
+                Regex regex = new Regex("[0-9]+");
+
+                if (!isLoaded)
+                {
+                    System.Windows.Forms.MessageBox.Show("data is not loaded yet");
+                    return;
+                } else if (!regex.IsMatch(minGamesAnswer.Text))
+                {
+                    System.Windows.Forms.MessageBox.Show("not a whole number");
+                    return;
+                }
+
                 DataView dataView = new DataView(model.winRates);
                 String allyGamesMin = "[" + Model.ALLY_GAMES + "]" + " >= " + minGamesAnswer.Text;
                 String enemyGamesMin = "[" + Model.ENEMY_GAMES + "]" + " >= " + minGamesAnswer.Text;
                 dataView.RowFilter =  allyGamesMin + " AND " + enemyGamesMin;
-                dataGridView1.DataSource = dataView;
-                dataGridView1.Columns[Model.ALLY_WIN_RATE].DefaultCellStyle.Format = "#.#";
-                dataGridView1.Columns[Model.ENEMY_WIN_RATE].DefaultCellStyle.Format = "#.#";
-                dataGridView1.Refresh();
+                data.DataSource = dataView;
+                data.Columns[Model.ALLY_WIN_RATE].DefaultCellStyle.Format = "#.#";
+                data.Columns[Model.ENEMY_WIN_RATE].DefaultCellStyle.Format = "#.#";
+                data.Refresh();
             }
         }
 

@@ -32,11 +32,11 @@
             this.go = new System.Windows.Forms.Button();
             this.personalWin = new System.Windows.Forms.TextBox();
             this.region = new System.Windows.Forms.ComboBox();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.data = new System.Windows.Forms.DataGridView();
             this.minGamesAnswer = new System.Windows.Forms.TextBox();
             this.minGamesQuery = new System.Windows.Forms.TextBox();
             this.status = new System.Windows.Forms.TextBox();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.data)).BeginInit();
             this.SuspendLayout();
             // 
             // summoner
@@ -90,29 +90,30 @@
             this.region.Size = new System.Drawing.Size(48, 21);
             this.region.TabIndex = 1;
             // 
-            // dataGridView1
+            // data
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeColumns = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(12, 57);
-            this.dataGridView1.MaximumSize = new System.Drawing.Size(561, 242);
-            this.dataGridView1.MinimumSize = new System.Drawing.Size(561, 242);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            this.dataGridView1.Size = new System.Drawing.Size(561, 242);
-            this.dataGridView1.TabIndex = 3;
+            this.data.AllowUserToAddRows = false;
+            this.data.AllowUserToDeleteRows = false;
+            this.data.AllowUserToResizeColumns = false;
+            this.data.AllowUserToResizeRows = false;
+            this.data.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.data.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.data.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.data.Location = new System.Drawing.Point(12, 57);
+            this.data.MaximumSize = new System.Drawing.Size(561, 242);
+            this.data.MinimumSize = new System.Drawing.Size(561, 242);
+            this.data.Name = "data";
+            this.data.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
+            this.data.Size = new System.Drawing.Size(561, 242);
+            this.data.TabIndex = 0;
+            this.data.TabStop = false;
             // 
             // minGamesAnswer
             // 
             this.minGamesAnswer.Location = new System.Drawing.Point(158, 305);
             this.minGamesAnswer.Name = "minGamesAnswer";
             this.minGamesAnswer.Size = new System.Drawing.Size(27, 20);
-            this.minGamesAnswer.TabIndex = 4;
+            this.minGamesAnswer.TabIndex = 3;
             this.minGamesAnswer.Text = "1";
             this.minGamesAnswer.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.minGamesAnswer_KeyPress);
             // 
@@ -145,15 +146,17 @@
             this.Controls.Add(this.status);
             this.Controls.Add(this.minGamesQuery);
             this.Controls.Add(this.minGamesAnswer);
-            this.Controls.Add(this.dataGridView1);
+            this.Controls.Add(this.data);
             this.Controls.Add(this.region);
             this.Controls.Add(this.personalWin);
             this.Controls.Add(this.go);
             this.Controls.Add(this.summoner);
+            this.MaximumSize = new System.Drawing.Size(604, 371);
+            this.MinimumSize = new System.Drawing.Size(604, 371);
             this.Name = "Gui";
             this.ShowIcon = false;
             this.Text = "ChampionWinRate";
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.data)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -165,7 +168,7 @@
         private System.Windows.Forms.Button go;
         private System.Windows.Forms.TextBox personalWin;
         private System.Windows.Forms.ComboBox region;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView data;
         private System.Windows.Forms.TextBox minGamesAnswer;
         private System.Windows.Forms.TextBox minGamesQuery;
         private System.Windows.Forms.TextBox status;
