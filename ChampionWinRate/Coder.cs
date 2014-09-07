@@ -34,5 +34,12 @@ namespace ChampionWinRate
             String url = HTTPS + region + API + region + getMatchInfo + matchId + "?" + KEY;
             return url;
         }
+
+        public static String LookUpChampionNameUrl(String region, int championId)
+        {
+            String lookUpChampionName = "/v1.2/champion/";
+            String url = HTTPS + "global" + API + "static-data/" + region + lookUpChampionName + championId + "?" + KEY;
+            return url;
+        }
     }
 }

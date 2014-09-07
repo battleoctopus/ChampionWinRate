@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MatchHistoryNameSpace;
 using MatchInfoNameSpace;
+using System.Data;
 
 namespace ChampionWinRate
 {
@@ -15,18 +16,25 @@ namespace ChampionWinRate
     // participants as values.
     class Model
     {
-        private Reader reader = new Reader();
+        private Reader reader;
         private Dictionary<int, PersonalParticipant> personalHistory = new Dictionary<int, PersonalParticipant>();
         private Dictionary<int, List<GlobalParticipant>> globalHistory = new Dictionary<int, List<GlobalParticipant>>();
         private Dictionary<int, Dictionary<Stats, int>> championStats = new Dictionary<int, Dictionary<Stats, int>>();
+        public DataTable winRates = new DataTable();
         private String region;
         private const int MATCH_SEARCH_LIMIT = 15; // Riot restricts the amount of match history that can be searched
+        public const String ALLY_GAMES = "Ally Games";
+        public const String ENEMY_GAMES = "Enemy Games";
+
+        public Model (String region)
+        {
+            reader = new Reader();
+            this.region = region;
+        }
 
         // Stores personal history in a dictionary.
-        public void StorePersonalHistory(String region, String summonerName)
+        public void StorePersonalHistory(String summonerName)
         {
-            this.region = region;
-
             String summonerIdUrl = Coder.GetSummonerIdUrl(region, summonerName);
             String summonerIdJson = reader.TryRequest(summonerIdUrl);
             String summonerId = Parser.GetSummonerId(summonerIdJson);
@@ -115,6 +123,58 @@ namespace ChampionWinRate
                     }
                 }
             }
+        }
+
+        // Calculates win rates for each champion from champion statistics
+        // dictionary.
+        public void CalcWinRates()
+        {
+            winRates.Columns.Add("Champion", typeof(String));
+            winRates.Columns.Add(ALLY_GAMES, typeof(int));
+            winRates.Columns.Add("Ally Win %", typeof(double));
+            winRates.Columns.Add("Enemy Win %", typeof(double));
+            winRates.Columns.Add(ENEMY_GAMES, typeof(int));
+
+            foreach (int championId in championStats.Keys)
+            {
+                String championName = LookUpChampionName(championId);
+                Dictionary<Stats, int> stats = championStats[championId];
+                double allyGames = stats[Stats.AllyWin] + stats[Stats.AllyLoss];
+                double allyWin = 100d * stats[Stats.AllyWin] / (stats[Stats.AllyWin] + stats[Stats.AllyLoss]);
+                double enemyWin = 100d * stats[Stats.EnemyWin] / (stats[Stats.EnemyWin] + stats[Stats.EnemyLoss]);
+                double enemyGames = stats[Stats.EnemyWin] + stats[Stats.EnemyLoss];
+                winRates.Rows.Add(championName, allyGames, allyWin, enemyWin, enemyGames);
+            }
+        }
+
+        // Calculates personal win rate from personal history dictionary.
+        public double CalcPersonalWinRate()
+        {
+            int wins = 0;
+            int games = 0;
+
+            foreach (int matchId in personalHistory.Keys)
+            {
+                games += 1;
+                PersonalParticipant personalParticipant = personalHistory[matchId];
+                
+                if (personalParticipant.isWin)
+                {
+                    wins += 1;
+                }
+            }
+
+            return 100d * wins / games;
+        }
+
+        // Looks up the champion name given the champion ID.
+        private String LookUpChampionName(int championId)
+        {
+            String url = Coder.LookUpChampionNameUrl(region, championId);
+            String json = reader.RequestStatic(url);
+            ChampionInfo championInfo = Parser.ParseChampionInfo(json);
+            String championName = championInfo.name;
+            return championName;
         }
     }
 

@@ -39,7 +39,7 @@ namespace ChampionWinRate
         }
 
         // Sends an API request to riotgames.com. Returns an empty string if
-        // Riot doesn't honor its rate limit.
+        // Riot doesn't honor its rate limit. API key must be included in url.
         private String Request(String url)
         {
             WebClient client = new WebClient();
@@ -65,6 +65,14 @@ namespace ChampionWinRate
 
                 return "";
             }
+        }
+
+        // Sends an API request for static data to riotgames.com. Adds the first
+        // API key since static requests do not count towards the rate limit.
+        public String RequestStatic(String url)
+        {
+            String message = Request(url + keysDict.Keys.First());
+            return message;
         }
 
         // Tries to send an API request to riotgames.com. If all API keys have

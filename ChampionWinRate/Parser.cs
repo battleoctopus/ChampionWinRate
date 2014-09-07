@@ -34,5 +34,11 @@ namespace ChampionWinRate
             MatchInfo matchInfo = JsonConvert.DeserializeObject<MatchInfo>(json);
             return matchInfo;
         }
+
+        public static ChampionInfo ParseChampionInfo(String json)
+        {
+            ChampionInfo championInfo = JsonConvert.DeserializeObject<ChampionInfo>(json);
+            return championInfo;
+        }
     }
 }
