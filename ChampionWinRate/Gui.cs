@@ -15,6 +15,7 @@ namespace ChampionWinRate
     {
         private Model model;
         private const int ENTER = 13;
+        private const int MIN_GAME_DEFAULT = 1;
         private bool isLoaded = false;
 
         public Gui()
@@ -29,6 +30,8 @@ namespace ChampionWinRate
             personalWin.Refresh();
             status.Text = "";
             status.Refresh();
+            data.DataSource = null;
+            data.Refresh();
             model = new Model(region.Text);
             status.Text = "finding all ranked solo and duo games";
             status.Refresh();
@@ -53,9 +56,12 @@ namespace ChampionWinRate
             status.Text = "Tallied all game data. Calculating win rates.";
             status.Refresh();
             model.CalcWinRates();
-            personalWin.Text = "personal win rate: " + model.CalcPersonalWinRate().ToString("#.#") +"%";
+            personalWin.Text = "personal win rate: " + model.CalcPersonalWinRate().ToString("0.#") +"%";
             personalWin.Refresh();
             isLoaded = true;
+            int n;
+            int minGames = (int.TryParse(minGamesAnswer.Text, out n)) ? n : MIN_GAME_DEFAULT;
+            minGamesAnswer.Text = minGames.ToString();
             minGamesAnswer_KeyPress("", new KeyPressEventArgs((char) ENTER));
             status.Text = "done with " + model.CountMatches() + " games";
             status.Refresh();
@@ -65,16 +71,21 @@ namespace ChampionWinRate
         {
             if (e.KeyChar == (char) ENTER)
             {
-                Regex regex = new Regex("[0-9]+");
+                int n;
 
                 if (!isLoaded)
                 {
                     System.Windows.Forms.MessageBox.Show("data is not loaded yet");
                     return;
-                } else if (!regex.IsMatch(minGamesAnswer.Text))
+                }
+                else if (!int.TryParse(minGamesAnswer.Text, out n))
                 {
                     System.Windows.Forms.MessageBox.Show("not a whole number");
                     return;
+                }
+                else
+                {
+                    minGamesAnswer.Text = n.ToString();
                 }
 
                 DataView dataView = new DataView(model.winRates);
@@ -82,8 +93,8 @@ namespace ChampionWinRate
                 String enemyGamesMin = "[" + Model.ENEMY_GAMES + "]" + " >= " + minGamesAnswer.Text;
                 dataView.RowFilter =  allyGamesMin + " AND " + enemyGamesMin;
                 data.DataSource = dataView;
-                data.Columns[Model.ALLY_WIN_RATE].DefaultCellStyle.Format = "#.#";
-                data.Columns[Model.ENEMY_WIN_RATE].DefaultCellStyle.Format = "#.#";
+                data.Columns[Model.ALLY_WIN_RATE].DefaultCellStyle.Format = "0.#";
+                data.Columns[Model.ENEMY_WIN_RATE].DefaultCellStyle.Format = "0.#";
                 data.Refresh();
             }
         }

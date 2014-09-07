@@ -143,6 +143,11 @@ namespace ChampionWinRate
             winRates.Columns.Add(ALLY_WIN_RATE, typeof(double));
             winRates.Columns.Add(ENEMY_WIN_RATE, typeof(double));
             winRates.Columns.Add(ENEMY_GAMES, typeof(int));
+            
+            foreach (DataColumn dataColumn in winRates.Columns)
+            {
+                dataColumn.ReadOnly = true;
+            }
 
             foreach (int championId in championStats.Keys)
             {
