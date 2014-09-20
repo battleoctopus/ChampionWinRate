@@ -34,13 +34,13 @@ namespace ChampionWinRate
 
             String summonerIdUrl = Coder.GetSummonerIdUrl(region.Text, summoner.Text);
 
-            if (model.reader.TryRequest(summonerIdUrl).Equals(""))
+            if (model.reader.Request(summonerIdUrl).Equals(""))
             {
                 System.Windows.Forms.MessageBox.Show("invalid summoner name and or region");
                 return;
             }
 
-            String summonerIdJson = model.reader.TryRequest(summonerIdUrl);
+            String summonerIdJson = model.reader.Request(summonerIdUrl);
 
             model.StorePersonalHistory(summoner.Text, status);
             model.StoreGlobalHistory(status);

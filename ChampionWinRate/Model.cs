@@ -39,7 +39,7 @@ namespace ChampionWinRate
         public void StorePersonalHistory(String summonerName, TextBox status)
         {
             String summonerIdUrl = Coder.GetSummonerIdUrl(region, summonerName);
-            String summonerIdJson = reader.TryRequest(summonerIdUrl);
+            String summonerIdJson = reader.Request(summonerIdUrl);
             String summonerId = Parser.GetSummonerId(summonerIdJson);
 
             int matchNumber = 0;
@@ -48,7 +48,7 @@ namespace ChampionWinRate
             while (true)
             {
                 String matchHistoryUrl = Coder.GetMatchHistoryUrl(region, summonerId, matchNumber, matchNumber + MATCH_SEARCH_LIMIT);
-                String matchHistoryJson = reader.TryRequest(matchHistoryUrl);
+                String matchHistoryJson = reader.Request(matchHistoryUrl);
 
                 // there is no more match history
                 if (matchHistoryJson.Equals("{}"))
@@ -80,7 +80,7 @@ namespace ChampionWinRate
                 status.Text = "Found all games. Loading game data " + matchCount + "/" + personalHistory.Keys.Count + ".";
                 status.Refresh();
                 String matchInfoUrl = Coder.GetMatchInfoUrl(region, matchId);
-                String matchInfoJson = reader.TryRequest(matchInfoUrl);
+                String matchInfoJson = reader.Request(matchInfoUrl);
                 MatchInfo matchInfo = Parser.ParseMatchInfo(matchInfoJson);
                 globalHistory[matchId] = new List<GlobalParticipant>();
 
@@ -193,7 +193,7 @@ namespace ChampionWinRate
         private String LookUpChampionName(int championId)
         {
             String url = Coder.LookUpChampionNameUrl(region, championId);
-            String json = reader.RequestStatic(url);
+            String json = reader.Request(url);
             ChampionInfo championInfo = Parser.ParseChampionInfo(json);
             String championName = championInfo.name;
             return championName;

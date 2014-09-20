@@ -22,58 +22,31 @@ namespace ChampionWinRate
             this.key = Resources.ApiKeys;
         }
 
-        // Sends an API request to riotgames.com. Returns an empty string if
-        // Riot returns an error. API key must be included in url.
-        private String Request(String url)
+        // Sends an API request to riotgames.com. Stalls if Riot throws an
+        // error. API key must not be included.
+        public String Request(String url)
         {
-            WebClient client = new WebClient();
-
-            // Riot doesn't always honor its rate limit
-            try
+            using (WebClient client = new WebClient())
             {
-                Stream stream = client.OpenRead(url);
-                StreamReader reader = new StreamReader(stream);
-                String message = reader.ReadToEnd();
-                return message;
-            }
-            catch (WebException webException)
-            {
-                if (webException.ToString().Contains(RATE_LIMIT_CODE))
+                // stall until the API key is under the rate limit
+                while (true)
                 {
-                    Console.WriteLine(RATE_LIMIT_EXCEEDED);
-                    return RATE_LIMIT_EXCEEDED;
+                    try
+                    {
+                        return client.DownloadString(url + key);
+                    }
+                    catch (WebException webException)
+                    {
+                        if (webException.ToString().Contains(RATE_LIMIT_CODE))
+                        {
+                            Console.WriteLine(RATE_LIMIT_EXCEEDED);
+                        }
+                        else
+                        {
+                            Console.WriteLine(webException.ToString());
+                        }
+                    }
                 }
-                else
-                {
-                    Console.WriteLine(webException.ToString());
-                }
-
-                return "";
-            }
-        }
-
-        // Sends an API request for static data to riotgames.com. Static
-        // requests do not count towards the rate limit.
-        public String RequestStatic(String url)
-        {
-            return Request(url + key);
-        }
-
-        // Tries to send an API request to riotgames.com, stalling if the rate
-        // limit is reached.
-        public String TryRequest(String url)
-        {
-            // stall until the API key is under the rate limit
-            while (true)
-            {
-                String message = Request(url + key);
-
-                if (message == RATE_LIMIT_EXCEEDED | message == "")
-                {
-                    continue;
-                }
-
-                return message;
             }
         }
     }
