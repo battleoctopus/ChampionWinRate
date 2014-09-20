@@ -28,13 +28,9 @@ namespace ChampionWinRate
         {
             personalWin.Text = "";
             personalWin.Refresh();
-            status.Text = "";
-            status.Refresh();
             data.DataSource = null;
             data.Refresh();
             model = new Model(region.Text);
-            status.Text = "finding all ranked solo and duo games";
-            status.Refresh();
 
             String summonerIdUrl = Coder.GetSummonerIdUrl(region.Text, summoner.Text);
 
@@ -46,16 +42,10 @@ namespace ChampionWinRate
 
             String summonerIdJson = model.reader.TryRequest(summonerIdUrl);
 
-            model.StorePersonalHistory(summoner.Text);
-            status.Text = "Found all games. Loading game data.";
-            status.Refresh();
+            model.StorePersonalHistory(summoner.Text, status);
             model.StoreGlobalHistory(status);
-            status.Text = "Loaded all game data. Tallying wins and losses.";
-            status.Refresh();
             model.CalcChampionStats();
-            status.Text = "Tallied all game data. Calculating win rates.";
-            status.Refresh();
-            model.CalcWinRates();
+            model.CalcWinRates(status);
             personalWin.Text = "personal win rate: " + model.CalcPersonalWinRate().ToString("0.#") +"%";
             personalWin.Refresh();
             isLoaded = true;
@@ -105,6 +95,11 @@ namespace ChampionWinRate
             {
                 load_Click("", new EventArgs());
             }
+        }
+
+        private void minGamesAnswer_Leave(object sender, EventArgs e)
+        {
+            minGamesAnswer_KeyPress("", new KeyPressEventArgs((char) ENTER));
         }
     }
 }

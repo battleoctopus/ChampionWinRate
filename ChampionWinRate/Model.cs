@@ -36,18 +36,18 @@ namespace ChampionWinRate
         }
 
         // Stores personal history in a dictionary.
-        public void StorePersonalHistory(String summonerName)
+        public void StorePersonalHistory(String summonerName, TextBox status)
         {
             String summonerIdUrl = Coder.GetSummonerIdUrl(region, summonerName);
             String summonerIdJson = reader.TryRequest(summonerIdUrl);
             String summonerId = Parser.GetSummonerId(summonerIdJson);
 
-            int begin = 0;
+            int matchNumber = 0;
 
             // loop until there is no more match history
             while (true)
             {
-                String matchHistoryUrl = Coder.GetMatchHistoryUrl(region, summonerId, begin, begin + MATCH_SEARCH_LIMIT);
+                String matchHistoryUrl = Coder.GetMatchHistoryUrl(region, summonerId, matchNumber, matchNumber + MATCH_SEARCH_LIMIT);
                 String matchHistoryJson = reader.TryRequest(matchHistoryUrl);
 
                 // there is no more match history
@@ -57,13 +57,16 @@ namespace ChampionWinRate
                 }
 
                 MatchHistory matchHistory = Parser.ParseMatchHistory(matchHistoryJson);
+                status.Text = (matchNumber + matchHistory.matches.Count) + " games found";
+                status.Refresh();
+
                 foreach (Match match in matchHistory.matches)
                 {
                     MatchHistoryNameSpace.Participant participant = match.participants[0];
                     personalHistory[match.matchId] = new PersonalParticipant(match.participants[0].teamId, participant.stats.winner, participant.championId);
                 }
 
-                begin += MATCH_SEARCH_LIMIT;
+                matchNumber += MATCH_SEARCH_LIMIT;
             }
         }
 
@@ -136,7 +139,7 @@ namespace ChampionWinRate
 
         // Calculates win rates for each champion from champion statistics
         // dictionary.
-        public void CalcWinRates()
+        public void CalcWinRates(TextBox status)
         {
             winRates.Columns.Add("Champion", typeof(String));
             winRates.Columns.Add(ALLY_GAMES, typeof(int));
@@ -149,8 +152,13 @@ namespace ChampionWinRate
                 dataColumn.ReadOnly = true;
             }
 
+            int championCounter = 1;
+
             foreach (int championId in championStats.Keys)
             {
+                status.Text = "calculating win rate for champion " + championCounter + "/" + championStats.Keys.Count;
+                status.Refresh();
+                championCounter++;
                 String championName = LookUpChampionName(championId);
                 Dictionary<Stats, int> stats = championStats[championId];
                 double allyGames = stats[Stats.AllyWin] + stats[Stats.AllyLoss];

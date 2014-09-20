@@ -119,6 +119,7 @@
             this.minGamesAnswer.TabIndex = 3;
             this.minGamesAnswer.Text = "1";
             this.minGamesAnswer.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.minGamesAnswer_KeyPress);
+            this.minGamesAnswer.Leave += new System.EventHandler(this.minGamesAnswer_Leave);
             // 
             // minGamesQuery
             // 

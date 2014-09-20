@@ -68,7 +68,7 @@ namespace ChampionWinRate
             {
                 String message = Request(url + key);
 
-                if (message == RATE_LIMIT_EXCEEDED)
+                if (message == RATE_LIMIT_EXCEEDED | message == "")
                 {
                     continue;
                 }
