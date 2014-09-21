@@ -14,7 +14,7 @@ namespace ChampionWinRate
     public partial class Gui : Form
     {
         private Model model;
-        private const int ENTER = 13;
+        private const int ENTER = 13; // char of "enter" key
         private const int MIN_GAME_DEFAULT = 1;
         private bool isLoaded = false;
 
@@ -24,16 +24,25 @@ namespace ChampionWinRate
             this.region.Text = "na";
         }
 
-        private void load_Click(object sender, EventArgs e)
+        // Event: go is clicked. Gets data for summoner and region and displays
+        //        it in data.
+        private void go_Click(object sender, EventArgs e)
         {
             personalWin.Text = "";
             personalWin.Refresh();
+
             data.DataSource = null;
             data.Refresh();
-            model = new Model(region.Text);
 
+            int n;
+            int minGamesInt = (int.TryParse(minGames.Text, out n)) ? n : MIN_GAME_DEFAULT;
+            minGames.Text = minGamesInt.ToString();
+            minGames.Refresh();
+
+            model = new Model(region.Text);
             String summonerIdUrl = Coder.GetSummonerIdUrl(region.Text, summoner.Text);
 
+            // invalid summoner name and or region
             if (model.reader.Request(summonerIdUrl).Equals(""))
             {
                 System.Windows.Forms.MessageBox.Show("invalid summoner name and or region");
@@ -46,18 +55,29 @@ namespace ChampionWinRate
             model.StoreGlobalHistory(status);
             model.CalcChampionStats();
             model.CalcWinRates(status);
-            personalWin.Text = "personal win rate: " + model.CalcPersonalWinRate().ToString("0.#") +"%";
-            personalWin.Refresh();
             isLoaded = true;
-            int n;
-            int minGames = (int.TryParse(minGamesAnswer.Text, out n)) ? n : MIN_GAME_DEFAULT;
-            minGamesAnswer.Text = minGames.ToString();
-            minGamesAnswer_KeyPress("", new KeyPressEventArgs((char) ENTER));
+            minGames_KeyPress("", new KeyPressEventArgs((char) ENTER));
+
+            double personalWinRate = model.CalcPersonalWinRate();
+
+            if (double.IsNaN(personalWinRate))
+            {
+                personalWin.Text = "no ranked games played";
+            }
+            else
+            {
+                personalWin.Text = "personal win rate: " + personalWinRate.ToString("0.#") +"%";
+            }
+
+            personalWin.Refresh();
+
             status.Text = "done with " + model.CountMatches() + " games";
             status.Refresh();
         }
 
-        private void minGamesAnswer_KeyPress(object sender, KeyPressEventArgs e)
+        // Event: minGames has a key press. If "enter" was pressed, filters data
+        //        based on minGames.
+        private void minGames_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char) ENTER)
             {
@@ -68,20 +88,23 @@ namespace ChampionWinRate
                     System.Windows.Forms.MessageBox.Show("data is not loaded yet");
                     return;
                 }
-                else if (!int.TryParse(minGamesAnswer.Text, out n))
+                else if (!int.TryParse(minGames.Text, out n))
                 {
                     System.Windows.Forms.MessageBox.Show("not a whole number");
+                    minGames.Select();
                     return;
                 }
                 else
                 {
-                    minGamesAnswer.Text = n.ToString();
+                    minGames.Text = n.ToString();
                 }
 
                 DataView dataView = new DataView(model.winRates);
-                String allyGamesMin = "[" + Model.ALLY_GAMES + "]" + " >= " + minGamesAnswer.Text;
-                String enemyGamesMin = "[" + Model.ENEMY_GAMES + "]" + " >= " + minGamesAnswer.Text;
+
+                String allyGamesMin = "[" + Model.ALLY_GAMES + "]" + " >= " + minGames.Text;
+                String enemyGamesMin = "[" + Model.ENEMY_GAMES + "]" + " >= " + minGames.Text;
                 dataView.RowFilter =  allyGamesMin + " AND " + enemyGamesMin;
+
                 data.DataSource = dataView;
                 data.Columns[Model.ALLY_WIN_RATE].DefaultCellStyle.Format = "0.#";
                 data.Columns[Model.ENEMY_WIN_RATE].DefaultCellStyle.Format = "0.#";
@@ -89,17 +112,20 @@ namespace ChampionWinRate
             }
         }
 
+        // Event: summoner has a key press. If "enter" was pressed, go_Click()
+        //        is called.
         private void summoner_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (e.KeyChar == (char) ENTER)
             {
-                load_Click("", new EventArgs());
+                go_Click("", new EventArgs());
             }
         }
 
-        private void minGamesAnswer_Leave(object sender, EventArgs e)
+        // Event: minGames loses focus. minGames_KeyPress() is called.
+        private void minGames_Leave(object sender, EventArgs e)
         {
-            minGamesAnswer_KeyPress("", new KeyPressEventArgs((char) ENTER));
+            minGames_KeyPress("", new KeyPressEventArgs((char) ENTER));
         }
     }
 }

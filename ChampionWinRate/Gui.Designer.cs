@@ -33,7 +33,7 @@
             this.personalWin = new System.Windows.Forms.TextBox();
             this.region = new System.Windows.Forms.ComboBox();
             this.data = new System.Windows.Forms.DataGridView();
-            this.minGamesAnswer = new System.Windows.Forms.TextBox();
+            this.minGames = new System.Windows.Forms.TextBox();
             this.minGamesQuery = new System.Windows.Forms.TextBox();
             this.status = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.data)).BeginInit();
@@ -57,7 +57,7 @@
             this.go.TabIndex = 2;
             this.go.Text = "go";
             this.go.UseVisualStyleBackColor = true;
-            this.go.Click += new System.EventHandler(this.load_Click);
+            this.go.Click += new System.EventHandler(this.go_Click);
             // 
             // personalWin
             // 
@@ -109,17 +109,17 @@
             this.data.TabIndex = 0;
             this.data.TabStop = false;
             // 
-            // minGamesAnswer
+            // minGames
             // 
-            this.minGamesAnswer.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.minGamesAnswer.Location = new System.Drawing.Point(158, 305);
-            this.minGamesAnswer.MaxLength = 3;
-            this.minGamesAnswer.Name = "minGamesAnswer";
-            this.minGamesAnswer.Size = new System.Drawing.Size(27, 20);
-            this.minGamesAnswer.TabIndex = 3;
-            this.minGamesAnswer.Text = "1";
-            this.minGamesAnswer.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.minGamesAnswer_KeyPress);
-            this.minGamesAnswer.Leave += new System.EventHandler(this.minGamesAnswer_Leave);
+            this.minGames.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.minGames.Location = new System.Drawing.Point(158, 305);
+            this.minGames.MaxLength = 3;
+            this.minGames.Name = "minGames";
+            this.minGames.Size = new System.Drawing.Size(27, 20);
+            this.minGames.TabIndex = 3;
+            this.minGames.Text = "1";
+            this.minGames.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.minGames_KeyPress);
+            this.minGames.Leave += new System.EventHandler(this.minGames_Leave);
             // 
             // minGamesQuery
             // 
@@ -150,7 +150,7 @@
             this.ClientSize = new System.Drawing.Size(588, 332);
             this.Controls.Add(this.status);
             this.Controls.Add(this.minGamesQuery);
-            this.Controls.Add(this.minGamesAnswer);
+            this.Controls.Add(this.minGames);
             this.Controls.Add(this.data);
             this.Controls.Add(this.region);
             this.Controls.Add(this.personalWin);
@@ -174,7 +174,7 @@
         private System.Windows.Forms.TextBox personalWin;
         private System.Windows.Forms.ComboBox region;
         private System.Windows.Forms.DataGridView data;
-        private System.Windows.Forms.TextBox minGamesAnswer;
+        private System.Windows.Forms.TextBox minGames;
         private System.Windows.Forms.TextBox minGamesQuery;
         private System.Windows.Forms.TextBox status;
     }

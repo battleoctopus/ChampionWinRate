@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace ChampionWinRate
 {
@@ -14,6 +15,7 @@ namespace ChampionWinRate
     class Reader
     {
         private String key;
+        private const String NOT_FOUND_CODE = "404";
         private const String RATE_LIMIT_CODE = "429";
         private const String RATE_LIMIT_EXCEEDED = "rate limit exceeded";
 
@@ -37,13 +39,19 @@ namespace ChampionWinRate
                     }
                     catch (WebException webException)
                     {
-                        if (webException.ToString().Contains(RATE_LIMIT_CODE))
+                        String exception = webException.ToString();
+
+                        if (exception.Contains(RATE_LIMIT_CODE))
                         {
                             Console.WriteLine(RATE_LIMIT_EXCEEDED);
                         }
+                        else if (exception.Contains(NOT_FOUND_CODE))
+                        {
+                            return "";
+                        }
                         else
                         {
-                            Console.WriteLine(webException.ToString());
+                            Console.WriteLine(exception);
                         }
                     }
                 }

@@ -47,7 +47,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChampionInfo.cs" />
     <Compile Include="Coder.cs" />
     <Compile Include="Gui.cs">
       <SubType>Form</SubType>

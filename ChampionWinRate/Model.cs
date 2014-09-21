@@ -7,6 +7,7 @@ using MatchHistoryNameSpace;
 using MatchInfoNameSpace;
 using System.Data;
 using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace ChampionWinRate
 {
@@ -14,16 +15,21 @@ namespace ChampionWinRate
     // statistics as values. Creates a personal history dictionary with match
     // IDs as keys and personal match statistics as values. Creates a global
     // history dictionary with match IDs as keys and a list of global
-    // participants as values.
+    // participants as values. Creates a champion stats dictionary with champion
+    // IDs as keys and dictionaries with outcomes as keys and tallies as values
+    // as values. Creates a champion names dictionary with champion IDs as keys
+    // and champion names as values.
     class Model
     {
         public Reader reader;
         private Dictionary<int, PersonalParticipant> personalHistory = new Dictionary<int, PersonalParticipant>();
         private Dictionary<int, List<GlobalParticipant>> globalHistory = new Dictionary<int, List<GlobalParticipant>>();
         private Dictionary<int, Dictionary<Stats, int>> championStats = new Dictionary<int, Dictionary<Stats, int>>();
+        private Dictionary<int, String> championNames = new Dictionary<int, String>();
         public DataTable winRates = new DataTable();
         private String region;
         private const int MATCH_SEARCH_LIMIT = 15; // Riot restricts the amount of match history that can be searched
+
         public const String ALLY_GAMES = "Ally Games";
         public const String ENEMY_GAMES = "Enemy Games";
         public const String ALLY_WIN_RATE = "Ally Win %";
@@ -33,6 +39,20 @@ namespace ChampionWinRate
         {
             reader = new Reader();
             this.region = region;
+
+            // populate championNames
+            String champions = reader.Request(Coder.GetChampionNamesUrl(region));
+            Regex regexId = new Regex("\"id\":(\\d+)");
+            MatchCollection idMatches = regexId.Matches(champions);
+            Regex regexName = new Regex("\"name\":\"([^\"]+)\"");
+            MatchCollection nameMatches = regexName.Matches(champions);
+
+            for (int i = 0; i < idMatches.Count; i++)
+            {
+                int id = Convert.ToInt32(idMatches[i].Groups[1].Value);
+                String name = nameMatches[i].Groups[1].Value;
+                championNames[id] = name;
+            }
         }
 
         // Stores personal history in a dictionary.
@@ -44,23 +64,24 @@ namespace ChampionWinRate
 
             int matchNumber = 0;
 
-            // loop until there is no more match history
+            // loops until there is no more match history
             while (true)
             {
                 String matchHistoryUrl = Coder.GetMatchHistoryUrl(region, summonerId, matchNumber, matchNumber + MATCH_SEARCH_LIMIT);
                 String matchHistoryJson = reader.Request(matchHistoryUrl);
 
                 // there is no more match history
-                if (matchHistoryJson.Equals("{}"))
+                if (matchHistoryJson.Equals("{}") | matchHistoryJson.Equals(""))
                 {
                     break;
                 }
 
                 MatchHistory matchHistory = Parser.ParseMatchHistory(matchHistoryJson);
+
                 status.Text = (matchNumber + matchHistory.matches.Count) + " games found";
                 status.Refresh();
-
-                foreach (Match match in matchHistory.matches)
+                
+                foreach (MatchHistoryNameSpace.Match match in matchHistory.matches)
                 {
                     MatchHistoryNameSpace.Participant participant = match.participants[0];
                     personalHistory[match.matchId] = new PersonalParticipant(match.participants[0].teamId, participant.stats.winner, participant.championId);
@@ -156,15 +177,15 @@ namespace ChampionWinRate
 
             foreach (int championId in championStats.Keys)
             {
-                status.Text = "calculating win rate for champion " + championCounter + "/" + championStats.Keys.Count;
-                status.Refresh();
                 championCounter++;
-                String championName = LookUpChampionName(championId);
                 Dictionary<Stats, int> stats = championStats[championId];
+
+                String championName = championNames[championId];
                 double allyGames = stats[Stats.AllyWin] + stats[Stats.AllyLoss];
                 double allyWin = 100d * stats[Stats.AllyWin] / (stats[Stats.AllyWin] + stats[Stats.AllyLoss]);
                 double enemyWin = 100d * stats[Stats.EnemyWin] / (stats[Stats.EnemyWin] + stats[Stats.EnemyLoss]);
                 double enemyGames = stats[Stats.EnemyWin] + stats[Stats.EnemyLoss];
+
                 winRates.Rows.Add(championName, allyGames, allyWin, enemyWin, enemyGames);
             }
         }
@@ -189,17 +210,6 @@ namespace ChampionWinRate
             return 100d * wins / games;
         }
 
-        // Looks up the champion name given the champion ID.
-        private String LookUpChampionName(int championId)
-        {
-            String url = Coder.LookUpChampionNameUrl(region, championId);
-            String json = reader.Request(url);
-            ChampionInfo championInfo = Parser.ParseChampionInfo(json);
-            String championName = championInfo.name;
-            return championName;
-        }
-
-        // Counts the number of matches.
         public int CountMatches()
         {
             int count = personalHistory.Keys.Count;
