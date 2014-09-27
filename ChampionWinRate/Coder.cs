@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace ChampionWinRate
 {
@@ -16,7 +17,7 @@ namespace ChampionWinRate
         public static String GetSummonerIdUrl(String region, String summonerName)
         {
             String getSummonerId = "/v1.4/summoner/by-name/";
-            return HTTPS + region + API + region + getSummonerId + summonerName + "?" + KEY;
+            return HTTPS + region + API + region + getSummonerId + HttpUtility.UrlEncode(summonerName.Replace(" ", String.Empty)) + "?" + KEY;
         }
 
         public static String GetMatchHistoryUrl(String region, String summonerId, int begin, int end)
@@ -34,8 +35,9 @@ namespace ChampionWinRate
 
         public static String GetChampionNamesUrl(String region)
         {
+            String global = region == "na" ? region : "global";
             String championNames = "/v1.2/champion";
-            return HTTPS + region + API + "static-data/" + region + championNames + "?" + KEY;
+            return HTTPS + global + API + "static-data/" + region + championNames + "?" + KEY;
         }
     }
 }

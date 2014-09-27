@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using System.Windows.Forms;
 
 namespace ChampionWinRate
@@ -15,6 +16,7 @@ namespace ChampionWinRate
     class Reader
     {
         private String key;
+        private const String UNAUTHORIZED_CODE = "401";
         private const String NOT_FOUND_CODE = "404";
         private const String RATE_LIMIT_CODE = "429";
         private const String RATE_LIMIT_EXCEEDED = "rate limit exceeded";
@@ -47,7 +49,11 @@ namespace ChampionWinRate
                         }
                         else if (exception.Contains(NOT_FOUND_CODE))
                         {
-                            return "";
+                            return String.Empty;
+                        }
+                        else if (exception.Contains(UNAUTHORIZED_CODE))
+                        {
+                            return String.Empty;
                         }
                         else
                         {

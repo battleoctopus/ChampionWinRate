@@ -28,8 +28,11 @@ namespace ChampionWinRate
         //        it in data.
         private void go_Click(object sender, EventArgs e)
         {
-            personalWin.Text = "";
+            personalWin.Text = String.Empty;
             personalWin.Refresh();
+
+            status.Text = String.Empty;
+            status.Refresh();
 
             data.DataSource = null;
             data.Refresh();
@@ -43,7 +46,7 @@ namespace ChampionWinRate
             String summonerIdUrl = Coder.GetSummonerIdUrl(region.Text, summoner.Text);
 
             // invalid summoner name and or region
-            if (model.reader.Request(summonerIdUrl).Equals(""))
+            if (model.reader.Request(summonerIdUrl).Equals(String.Empty))
             {
                 System.Windows.Forms.MessageBox.Show("invalid summoner name and or region");
                 return;
@@ -56,7 +59,7 @@ namespace ChampionWinRate
             model.CalcChampionStats();
             model.CalcWinRates(status);
             isLoaded = true;
-            minGames_KeyPress("", new KeyPressEventArgs((char) ENTER));
+            minGames_KeyPress(String.Empty, new KeyPressEventArgs((char) ENTER));
 
             double personalWinRate = model.CalcPersonalWinRate();
 
@@ -118,14 +121,14 @@ namespace ChampionWinRate
         {
             if (e.KeyChar == (char) ENTER)
             {
-                go_Click("", new EventArgs());
+                go_Click(String.Empty, new EventArgs());
             }
         }
 
         // Event: minGames loses focus. minGames_KeyPress() is called.
         private void minGames_Leave(object sender, EventArgs e)
         {
-            minGames_KeyPress("", new KeyPressEventArgs((char) ENTER));
+            minGames_KeyPress(String.Empty, new KeyPressEventArgs((char) ENTER));
         }
     }
 }

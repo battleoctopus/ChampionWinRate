@@ -71,7 +71,7 @@ namespace ChampionWinRate
                 String matchHistoryJson = reader.Request(matchHistoryUrl);
 
                 // there is no more match history
-                if (matchHistoryJson.Equals("{}") | matchHistoryJson.Equals(""))
+                if (matchHistoryJson.Equals("{}") | matchHistoryJson.Equals(String.Empty))
                 {
                     break;
                 }

@@ -61,7 +61,7 @@ namespace ChampionWinRate.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 887e20bb-9412-4cfb-9bff-f1a19f7eca96,36a9069a-93cd-4d50-b14a-dbaeb796ac81
+        ///   Looks up a localized string similar to
         ///.
         /// </summary>
         internal static string ApiKeys {
