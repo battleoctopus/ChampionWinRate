@@ -51,7 +51,7 @@
             // 
             // go
             // 
-            this.go.Location = new System.Drawing.Point(257, 10);
+            this.go.Location = new System.Drawing.Point(270, 9);
             this.go.Name = "go";
             this.go.Size = new System.Drawing.Size(27, 23);
             this.go.TabIndex = 2;
@@ -76,19 +76,19 @@
             this.region.DropDownWidth = 50;
             this.region.FormattingEnabled = true;
             this.region.Items.AddRange(new object[] {
-            "br",
-            "eune",
-            "euw",
-            "kr",
-            "lan",
-            "las",
-            "na",
-            "oce",
-            "ru",
-            "tr"});
+            "BR",
+            "EUNE",
+            "EUW",
+            "KR",
+            "LAN",
+            "LAS",
+            "NA",
+            "OCE",
+            "RU",
+            "TR"});
             this.region.Location = new System.Drawing.Point(203, 11);
             this.region.Name = "region";
-            this.region.Size = new System.Drawing.Size(48, 21);
+            this.region.Size = new System.Drawing.Size(61, 21);
             this.region.TabIndex = 1;
             // 
             // data
@@ -136,7 +136,7 @@
             // status
             // 
             this.status.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.status.Location = new System.Drawing.Point(290, 14);
+            this.status.Location = new System.Drawing.Point(303, 15);
             this.status.Name = "status";
             this.status.ReadOnly = true;
             this.status.Size = new System.Drawing.Size(238, 13);

@@ -33,11 +33,10 @@ namespace ChampionWinRate
             return HTTPS + region + API + region + getMatchInfo + matchId + "?" + KEY;
         }
 
-        public static String GetChampionNamesUrl(String region)
+        public static String GetChampionNamesUrl()
         {
-            String global = region == "na" ? region : "global";
             String championNames = "/v1.2/champion";
-            return HTTPS + global + API + "static-data/" + region + championNames + "?" + KEY;
+            return HTTPS + "na" + API + "static-data/" + "na" + championNames + "?" + KEY;
         }
     }
 }

@@ -8,6 +8,8 @@ using MatchInfoNameSpace;
 using System.Data;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace ChampionWinRate
 {
@@ -23,7 +25,7 @@ namespace ChampionWinRate
     {
         public Reader reader;
         private Dictionary<int, PersonalParticipant> personalHistory = new Dictionary<int, PersonalParticipant>();
-        private Dictionary<int, List<GlobalParticipant>> globalHistory = new Dictionary<int, List<GlobalParticipant>>();
+        private ConcurrentDictionary<int, List<GlobalParticipant>> globalHistory = new ConcurrentDictionary<int, List<GlobalParticipant>>();
         private Dictionary<int, Dictionary<Stats, int>> championStats = new Dictionary<int, Dictionary<Stats, int>>();
         private Dictionary<int, String> championNames = new Dictionary<int, String>();
         public DataTable winRates = new DataTable();
@@ -41,7 +43,7 @@ namespace ChampionWinRate
             this.region = region;
 
             // populate championNames
-            String champions = reader.Request(Coder.GetChampionNamesUrl(region));
+            String champions = reader.Request(Coder.GetChampionNamesUrl());
             Regex regexId = new Regex("\"id\":(\\d+)");
             MatchCollection idMatches = regexId.Matches(champions);
             Regex regexName = new Regex("\"name\":\"([^\"]+)\"");
@@ -96,22 +98,26 @@ namespace ChampionWinRate
         {
             int matchCount = 1;
 
-            foreach (int matchId in personalHistory.Keys)
-            {
-                status.Text = "Found all games. Loading game data " + matchCount + "/" + personalHistory.Keys.Count + ".";
-                status.Refresh();
-                String matchInfoUrl = Coder.GetMatchInfoUrl(region, matchId);
-                String matchInfoJson = reader.Request(matchInfoUrl);
-                MatchInfo matchInfo = Parser.ParseMatchInfo(matchInfoJson);
-                globalHistory[matchId] = new List<GlobalParticipant>();
-
-                foreach (MatchInfoNameSpace.Participant participant in matchInfo.participants)
+            Parallel.ForEach (personalHistory.Keys, matchId =>
                 {
-                    globalHistory[matchId].Add(new GlobalParticipant(participant.teamId, participant.stats.winner, participant.championId));
-                }
+                    if (!status.InvokeRequired)
+                    {
+                        status.Text = "Found all games. Loading game data " + matchCount + "/" + personalHistory.Keys.Count + ".";
+                        status.Refresh();
+                    }
 
-                matchCount += 1;
-            }
+                    String matchInfoUrl = Coder.GetMatchInfoUrl(region, matchId);
+                    String matchInfoJson = reader.Request(matchInfoUrl);
+                    MatchInfo matchInfo = Parser.ParseMatchInfo(matchInfoJson);
+                    globalHistory[matchId] = new List<GlobalParticipant>();
+
+                    foreach (MatchInfoNameSpace.Participant participant in matchInfo.participants)
+                    {
+                        globalHistory[matchId].Add(new GlobalParticipant(participant.teamId, participant.stats.winner, participant.championId));
+                    }
+
+                    Interlocked.Increment(ref matchCount);
+                });
         }
 
         // Tallies the appropriate win/loss and ally/enemy statistic in a
@@ -212,8 +218,7 @@ namespace ChampionWinRate
 
         public int CountMatches()
         {
-            int count = personalHistory.Keys.Count;
-            return count;
+            return personalHistory.Keys.Count;
         }
     }
 

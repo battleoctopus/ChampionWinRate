@@ -21,7 +21,7 @@ namespace ChampionWinRate
         public Gui()
         {
             InitializeComponent();
-            this.region.Text = "na";
+            this.region.Text = "NA";
         }
 
         // Event: go is clicked. Gets data for summoner and region and displays
@@ -42,8 +42,9 @@ namespace ChampionWinRate
             minGames.Text = minGamesInt.ToString();
             minGames.Refresh();
 
-            model = new Model(region.Text);
-            String summonerIdUrl = Coder.GetSummonerIdUrl(region.Text, summoner.Text);
+            String regionLower = region.Text.ToLower();
+            model = new Model(regionLower);
+            String summonerIdUrl = Coder.GetSummonerIdUrl(regionLower, summoner.Text);
 
             // invalid summoner name and or region
             if (model.reader.Request(summonerIdUrl).Equals(String.Empty))
