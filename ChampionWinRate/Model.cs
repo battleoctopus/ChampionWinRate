@@ -166,7 +166,7 @@ namespace ChampionWinRate
 
         // Calculates win rates for each champion from champion statistics
         // dictionary.
-        public void CalcWinRates(TextBox status)
+        public void CalcWinRates()
         {
             winRates.Columns.Add("Champion", typeof(String));
             winRates.Columns.Add(ALLY_GAMES, typeof(int));
@@ -179,11 +179,8 @@ namespace ChampionWinRate
                 dataColumn.ReadOnly = true;
             }
 
-            int championCounter = 1;
-
             foreach (int championId in championStats.Keys)
             {
-                championCounter++;
                 Dictionary<Stats, int> stats = championStats[championId];
 
                 String championName = championNames[championId];

@@ -58,7 +58,7 @@ namespace ChampionWinRate
             model.StorePersonalHistory(summoner.Text, status);
             model.StoreGlobalHistory(status);
             model.CalcChampionStats();
-            model.CalcWinRates(status);
+            model.CalcWinRates();
             isLoaded = true;
             minGames_KeyPress(String.Empty, new KeyPressEventArgs((char) ENTER));
 

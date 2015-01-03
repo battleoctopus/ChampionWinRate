@@ -23,7 +23,7 @@ namespace ChampionWinRate
         public static String GetMatchHistoryUrl(String region, String summonerId, int begin, int end)
         {
             String getMatchHistory = "/v2.2/matchhistory/";
-            String queues = "rankedQueues=RANKED_SOLO_5x5";
+            String queues = "rankedQueues=RANKED_SOLO_5x5,RANKED_TEAM_5x5";
             return HTTPS + region + API + region + getMatchHistory + summonerId + "?" + queues + "&" + "beginIndex=" + begin + "&" + "endIndex=" + end + "&" + KEY;
         }
 
